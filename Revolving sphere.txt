@@ -1,0 +1,89 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebGL sphere</title>
+<script src="G:\sphere\ibs\Three.js"></script>
+<script src="G:\sphere\libs\jquery.abc.js"></script>
+<script src="G:\sphere\libs\jquery.mousewheel.js"></script>
+<script src="G:\sphere\libs\RequestAnimationFrame.js"></script>
+<script src="G:\sphere\libs\sim.js"></script>
+<script>
+var renderer = null, scene = null,camera = null,mesh = null;
+function onLoad(){
+var container = document.getElementById("container");
+var app = new MyApp();
+app.init({ container: container });
+app.run();
+}
+MyApp = function(){
+Sim.App.call(this);}
+MyApp.prototype = new Sim.App();
+MyApp.prototype.init = function(param){
+Sim.App.prototype.init.call(this, param);
+var cube = new Cube();
+cube.init();
+this.addObject(cube);
+sph= new Array()
+for (i=1; i<=6; i++){
+sph[i]= new Sphere();
+sph[i].init(i);
+this.addObject(sph[i]);
+}	
+var light= new Light();
+light.init(-20,6,1);
+this.addObject(light);
+var light2= new Light();
+light2.init(40,6,1);
+this.addObject(light2);
+var k= 30;
+this.camera= new THREE.OrthographicCamera( container.offsetWidth/ - k, container.offsetWidth/ k, container.offsetHeight/ k, container.offsetHeight/ - k, -500, 2000 );
+this.camera.position.y= 2;
+this.camera.position.z= 3;
+var a = new THREE.Vector3(0 , 0.5, 0 );  	
+this.camera.lookAt(a);
+}
+Cube = function(){
+Sim.Object.call(this);}
+Cube.prototype = new Sim.Object();
+Sphere = function(){
+Sim.Object.call(this);}
+Sphere.prototype = new Sim.Object();
+Light = function(){
+Sim.Object.call(this);}
+Light.prototype = new Sim.Object();
+Cube.prototype.init = function(){
+var map = "http://www.w3schools.com/files/webgl-texture-green.jpg";
+var geometry = new THREE.CubeGeometry(40, 1, 40);
+var texture = THREE.ImageUtils.loadTexture(map);
+var material = new THREE.MeshPhongMaterial( { map: texture } );
+var mesh = new THREE.Mesh( geometry, material ); 
+mesh.position.set(0,-1,0)
+this.setObject3D(mesh);
+}
+Sphere.prototype.init = function(ind){
+var map = "http://www.w3schools.com/files/webgl-texture-wood.jpg";
+var geometry = new THREE.SphereGeometry(1.5, 32, 32, ind/3*Math.PI, 2*Math.PI, ind/6*Math.PI, Math.PI);
+var texture = THREE.ImageUtils.loadTexture(map);
+var material = new THREE.MeshPhongMaterial( { map: texture } );
+var mesh = new THREE.Mesh( geometry, material ); 
+mesh.position.set(ind*4-13.5,1,-4)
+this.setObject3D(mesh);
+}
+Light.prototype.init = function(x,y,z){
+var lit = new THREE.PointLight( 0xffffff, 1.2);
+lit.position.set(x, y, z);
+this.setObject3D(lit);    
+}
+Sphere.prototype.update = function(){
+this.object3D.rotation.z += 0.01;
+this.object3D.rotation.x += 0.01;
+}
+</script>
+</head>
+<body onLoad="onLoad();" style="">
+<div style="text-align: left"><font face="Tahoma"><a target="_blank" href="http://www.w3schools.com"><span style="font-size: 8pt; text-decoration: none">Revolving sphere</span></a></font></div>
+<div id="container" style="width:400px; height:80%; overflow:hidden; position:absolute; background-color:#000000"></div>
+</body>
+</html>
